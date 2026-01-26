@@ -1,63 +1,43 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+// REMOVED: import { getExploreProfiles } from '@/services/exploreService'; 
 import MatchesHeader from '@/components/MatchesHeader';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Star, ArrowRight, X, MapPin, Home, User, MessageCircle} from 'lucide-react';
+import { Star, ArrowRight, X, MapPin, Home, User, MessageCircle } from 'lucide-react';
+
+// 1. MOCK DATA (For the Demo)
+const MOCK_STARRED = [
+  {
+    id: 201,
+    type: 'roommates',
+    title: "Alex (CS Student)",
+    subtitle: "Looking in D7",
+    image: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=800&q=80",
+  },
+  {
+    id: 102,
+    type: 'apartments',
+    title: "Modern Loft near RMIT",
+    subtitle: "District 7, HCMC",
+    image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80",
+  }
+];
 
 export default function MatchesPage() {
   const router = useRouter();
   
   // --- STATE ---
-  const [studentCount, setStudentCount] = useState(0); 
-  const [starredItems, setStarredItems] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [studentCount, setStudentCount] = useState(1240); // Hardcoded "Live" count
+  const [starredItems, setStarredItems] = useState<any[]>(MOCK_STARRED);
 
-  // --- GET CURRENT USER ID (For Storage Namespacing) ---
-  // We use this to ensure User A doesn't see User B's stars on the same browser
-  const currentUserId = typeof window !== 'undefined' ? localStorage.getItem('userId') : null;
-
-  useEffect(() => {
-    // 1. Load Dynamic Explore Count
-    getExploreProfiles()
-      .then(profiles => {
-        setStudentCount(profiles.length);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.log("Explore count error", err);
-        setLoading(false);
-      });
-
-    // 2. Load Starred Items (SCOPED TO USER)
-    if (currentUserId) {
-      const storageKey = `starredItems_${currentUserId}`; // e.g., starredItems_12
-      const stored = localStorage.getItem(storageKey);
-      
-      if (stored) {
-        let parsedItems = JSON.parse(stored);
-        
-        // Safety Check: Filter out myself just in case
-        parsedItems = parsedItems.filter((item: any) => String(item.id) !== String(currentUserId));
-        
-        setStarredItems(parsedItems);
-      }
-    }
-  }, [currentUserId]);
-
+  // 2. SIMPLIFIED REMOVE LOGIC (UI Only)
   const handleRemoveStar = (id: number, type: string) => {
-    if (!currentUserId) return;
-
-    // Filter out the item
     const updated = starredItems.filter(item => !(item.id === id && item.type === type));
     setStarredItems(updated);
-    
-    // Save back to the USER-SPECIFIC key
-    const storageKey = `starredItems_${currentUserId}`;
-    localStorage.setItem(storageKey, JSON.stringify(updated));
   };
 
   return (
@@ -78,8 +58,8 @@ export default function MatchesPage() {
               
               <p className="text-blue-100 text-lg mb-8 max-w-lg leading-relaxed">
                 We've found <span className="font-bold text-white">
-                  {studentCount > 0 ? studentCount.toLocaleString() : "..."} 
-                </span> students near you matching your lifestyle and preferences.
+                  {studentCount.toLocaleString()} 
+                </span> students near you matching your lifestyle.
               </p>
               
               <div className="flex gap-4">
@@ -116,7 +96,7 @@ export default function MatchesPage() {
                {starredItems.map((item) => (
                   <Card key={`${item.type}-${item.id}`} className="group relative overflow-hidden hover:shadow-lg transition-all duration-300 border-gray-100">
                     
-                    {/* Remove Button (Visible on Hover) */}
+                    {/* Remove Button */}
                     <button 
                       onClick={(e) => { e.stopPropagation(); handleRemoveStar(item.id, item.type); }}
                       className="absolute top-3 right-3 z-20 p-2 bg-white/90 backdrop-blur-sm text-gray-400 hover:text-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-sm"
@@ -152,16 +132,16 @@ export default function MatchesPage() {
                         </div>
                         
                         {/* Action Footer */}
-                        {/* 2. UPDATED ACTION FOOTER */}
                         <div className="mt-auto pt-4 flex gap-3">
-                           {/* Chat Button: Only show for roommates, not apartment listings */}
+                           {/* Chat Button */}
                            {item.type === 'roommates' && (
                              <Button
                                size="icon"
                                className="shrink-0 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-100 shadow-sm transition-colors"
                                onClick={(e) => {
                                  e.stopPropagation();
-                                 router.push(`/chat/${item.id}`);
+                                 // Redirect to generic chat for demo
+                                 router.push(`/chat`); 
                                }}
                                title="Message"
                              >
