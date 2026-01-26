@@ -9,23 +9,16 @@ import { Logo } from '@/components/Logo';
 
 export default function SignupPage() {
   const router = useRouter();
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData);
 
-    try {
-      await registerUser(data);
-      router.push('/login'); 
-    } catch (err: any) {
-      setError('Registration failed. Username may be taken.');
-    } finally {
-      setLoading(false);
-    }
+    setTimeout(() => {
+        setLoading(false);
+        router.push('/login'); 
+    }, 1500);
   };
 
   return (

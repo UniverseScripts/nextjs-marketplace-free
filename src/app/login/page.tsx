@@ -10,40 +10,17 @@ import { ArrowRight, Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
     
-    const formData = new FormData(e.currentTarget);
-    
-    try {
-      // 1. Perform Login
-      await loginUser(formData);
-
-      // 2. Check Onboarding Status
-      const status = await getOnboardingStatus();
-
-      // 3. Smart Redirection Logic
-      if (!status.profile_completed) {
-        // Case 1: New Account -> Needs Profile
-        router.push('/onboarding/profile');
-      } else if (!status.test_completed) {
-        // Case 1.5: Profile Done -> Needs Personality Test
-        router.push('/test');
-      } else {
-        // Case 2: Everything Done -> Go to App
-        router.push('/explore'); 
-      }
-
-    } catch (err) {
-      setError('Invalid username or password.');
-    } finally {
+    setTimeout(() => {
       setLoading(false);
-    }
+      // Force redirect to the main app for the demo
+      router.push('/explore');
+    }, 1500);
   };
 
   return (
