@@ -18,7 +18,7 @@ export default function LoginPage() {
     
     setTimeout(() => {
       setLoading(false);
-      router.push('/explore');
+      router.push('/onboarding/profile');
     }, 1500);
   };
 
