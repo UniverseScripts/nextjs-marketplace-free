@@ -1,69 +1,81 @@
+'use client';
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/Logo';
-import { getOnboardingStatus } from '@/services/onBoardingService';
-import { ArrowRight, Shield, Users, Sparkles } from 'lucide-react';
+import { ArrowRight, Search, MessageCircle, Shield } from 'lucide-react';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <header className="px-6 py-6 border-b border-border/40">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Logo />
-          <div className="flex gap-4">
+    <div className="min-h-screen bg-white flex flex-col">
+      {/* NAV */}
+      <nav className="flex items-center justify-between p-6 border-b border-gray-50">
+        <Logo />
+        <div className="flex gap-3">
             <Link href="/login">
-              <Button variant="ghost">Sign In</Button>
+                <Button variant="ghost">Sign In</Button>
             </Link>
             <Link href="/signup">
-              <Button>Get Started</Button>
+                <Button>Get Started</Button>
             </Link>
-          </div>
         </div>
-      </header>
+      </nav>
 
-      {/* Hero Content */}
-      <main className="flex-1 flex items-center justify-center px-6">
-        <div className="max-w-3xl text-center space-y-8">
-          <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary/10 text-primary hover:bg-primary/20">
-            <Sparkles className="mr-1 h-3 w-3" />
-            New: AI Matching Algorithm
+      {/* HERO */}
+      <main className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col items-center justify-center text-center px-6 py-20 bg-gradient-to-b from-blue-50/50 to-white">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold tracking-wide uppercase mb-6">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+            </span>
+            Live Demo v1.0
           </div>
           
-          <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl text-foreground">
+          <h1 className="text-4xl md:text-6xl font-extrabold text-gray-900 tracking-tight mb-6">
             Find your perfect <br/>
-            <span className="text-primary">roommate</span> today.
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-500">
+              roommate today.
+            </span>
           </h1>
           
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            FitNest connects you with compatible roommates based on lifestyle, habits, and personality. No more awkward living situations.
+          <p className="max-w-md text-lg text-gray-500 mb-10 leading-relaxed">
+            The mobile-first platform connecting students and young professionals with compatible roommates.
           </p>
 
-          <div className="flex justify-center gap-4 pt-4">
-             <Link href="/signup">
-               <Button className="h-12 px-8 text-lg rounded-full">
-                 Start Matching <ArrowRight className="ml-2 h-4 w-4" />
-               </Button>
+          <div className="flex flex-col w-full max-w-sm gap-3">
+             <Link href="/login" className="w-full">
+                <Button size="lg" className="w-full h-12 text-base shadow-lg shadow-blue-500/20">
+                  Try the Demo <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
              </Link>
-          </div>
-
-          {/* Trust Badges */}
-          <div className="pt-12 grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
-             <div className="flex flex-col items-center gap-2">
-                <div className="p-3 bg-blue-50 rounded-full text-blue-600"><Shield className="h-6 w-6"/></div>
-                <span className="font-semibold">Verified Profiles</span>
-             </div>
-             <div className="flex flex-col items-center gap-2">
-                <div className="p-3 bg-green-50 rounded-full text-green-600"><Users className="h-6 w-6"/></div>
-                <span className="font-semibold">Smart Matching</span>
-             </div>
-             <div className="flex flex-col items-center gap-2">
-                <div className="p-3 bg-purple-50 rounded-full text-purple-600"><Sparkles className="h-6 w-6"/></div>
-                <span className="font-semibold">Lifestyle Fit</span>
-             </div>
+             <p className="text-xs text-gray-400">No credit card required • Free Demo Access</p>
           </div>
         </div>
+
+        {/* FEATURES */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-6 py-16 max-w-5xl mx-auto w-full">
+            <div className="p-6 rounded-2xl bg-gray-50 border border-gray-100/50">
+                <div className="mb-4 p-3 bg-white rounded-xl w-fit shadow-sm"><Search className="w-6 h-6 text-blue-600" /></div>
+                <h3 className="font-bold text-gray-900 mb-2">Smart Matching</h3>
+                <p className="text-gray-500 text-sm">Filter roommates by lifestyle and budget.</p>
+            </div>
+            <div className="p-6 rounded-2xl bg-gray-50 border border-gray-100/50">
+                <div className="mb-4 p-3 bg-white rounded-xl w-fit shadow-sm"><MessageCircle className="w-6 h-6 text-purple-600" /></div>
+                <h3 className="font-bold text-gray-900 mb-2">Instant Chat</h3>
+                <p className="text-gray-500 text-sm">Connect instantly with potential matches.</p>
+            </div>
+            <div className="p-6 rounded-2xl bg-gray-50 border border-gray-100/50">
+                <div className="mb-4 p-3 bg-white rounded-xl w-fit shadow-sm"><Shield className="w-6 h-6 text-teal-600" /></div>
+                <h3 className="font-bold text-gray-900 mb-2">Verified Profiles</h3>
+                <p className="text-gray-500 text-sm">University email verification ensures safety.</p>
+            </div>
+        </div>
       </main>
+
+      <footer className="py-8 text-center text-sm text-gray-400 border-t border-gray-50">
+        © 2025 Marketplace Starter. Open Source UI Demo.
+      </footer>
     </div>
   );
 }
