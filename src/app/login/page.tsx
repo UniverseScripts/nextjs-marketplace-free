@@ -18,7 +18,6 @@ export default function LoginPage() {
     
     setTimeout(() => {
       setLoading(false);
-      // Force redirect to the main app for the demo
       router.push('/explore');
     }, 1500);
   };
@@ -30,30 +29,24 @@ export default function LoginPage() {
       <div className="w-full max-w-md bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
         <div className="p-8">
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-gray-900">Welcome back</h1>
-            <p className="text-sm text-gray-500 mt-2">Enter your credentials to access your account</p>
+            <h1 className="text-2xl font-bold text-gray-900">Welcome back (Demo)</h1>
+            <p className="text-sm text-gray-500 mt-2">Any password works in this demo</p>
           </div>
-
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-md text-center">
-              {error}
-            </div>
-          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <label className="text-sm font-medium leading-none">Username</label>
-              <Input name="username" required placeholder="Enter your username" />
+              <Input name="username" required placeholder="demo_user" defaultValue="demo_user" />
             </div>
             
             <div className="space-y-2">
               <label className="text-sm font-medium leading-none">Password</label>
-              <Input name="password" type="password" required placeholder="••••••••" />
+              <Input name="password" type="password" required placeholder="••••••••" defaultValue="password" />
             </div>
 
             <Button className="w-full" disabled={loading}>
               {loading ? <Loader2 className="animate-spin h-4 w-4 mr-2" /> : null}
-              {loading ? 'Checking account...' : 'Sign In'}
+              {loading ? 'Signing in...' : 'Sign In'}
               {!loading && <ArrowRight className="ml-2 h-4 w-4" />}
             </Button>
           </form>

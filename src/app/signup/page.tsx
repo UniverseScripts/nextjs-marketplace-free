@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+// REMOVED: Service imports
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Logo } from '@/components/Logo';
@@ -15,6 +16,7 @@ export default function SignupPage() {
     e.preventDefault();
     setLoading(true);
 
+    
     setTimeout(() => {
         setLoading(false);
         router.push('/login'); 
@@ -29,14 +31,8 @@ export default function SignupPage() {
         <div className="p-8">
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold text-gray-900">Create an account</h1>
-            <p className="text-sm text-gray-500 mt-2">Join FitNest to find your perfect match</p>
+            <p className="text-sm text-gray-500 mt-2">Join to find your perfect match</p>
           </div>
-
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-md text-center">
-              {error}
-            </div>
-          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
