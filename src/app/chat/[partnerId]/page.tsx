@@ -2,8 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { getChatHistory, getWebSocketUrl, Message } from '@/services/chatService';
-import { getUserPublicProfile } from '@/services/authService';
 import { MessageSquareDashed, Send, Phone, Video, MoreVertical } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getExploreProfiles } from '@/services/exploreService'; 
 import MatchesHeader from '@/components/MatchesHeader';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';

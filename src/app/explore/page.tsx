@@ -10,14 +10,6 @@ import { ListingCard } from '@/components/ListingCard';
 import { Logo } from '@/components/Logo';
 import { EmptyState } from '@/components/EmptyState';
 
-// --- IMPORT DYNAMIC DATA SERVICES ---
-import { 
-  getExploreProfiles, 
-  getExploreListings, 
-  ExploreProfile, 
-  ExploreListing 
-} from '@/services/exploreService';
-
 export default function ExplorePage() {
   const [activeTab, setActiveTab] = useState<'roommates' | 'listings'>('roommates');
   const [currentIndex, setCurrentIndex] = useState(0);

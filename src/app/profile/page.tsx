@@ -14,9 +14,6 @@ import { NotificationRow } from '@/components/NotificationRow';
 import { StatsCard } from '@/components/StatsCard';
 import { SettingsRow } from '@/components/SettingsRow';
 
-// --- IMPORTS ---
-import { getMyProfile, ProfileData } from '@/services/onBoardingService';
-import { getMyMatches } from '@/services/matchService';
 
 // --- TYPES ---
 interface UserProfile extends ProfileData {
