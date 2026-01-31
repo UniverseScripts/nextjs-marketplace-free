@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { X, Heart, Info, Sparkles, User, SlidersHorizontal, Users, Home, Star, Loader2, RefreshCw } from 'lucide-react';
+import { X, Heart, Sparkles, User, Users, Home, Star, Loader2 } from 'lucide-react';
 import { ImageWithFallback } from '@/components/figma/ImageWithFallback';
 import { ListingCard } from '@/components/ListingCard';
 import { Logo } from '@/components/Logo';
@@ -76,7 +76,12 @@ export default function ExplorePage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
 
-  // --- STATE ---
+  // --- TOUCH STATE ---
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const startX = useRef(0);
+
+  // --- DATA STATE ---
   const [profiles, setProfiles] = useState<any[]>([]);
   const [listings, setListings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -86,11 +91,9 @@ export default function ExplorePage() {
     const loadMockData = () => {
       setLoading(true);
       
-      // 1. Get existing stars to filter them out
       const stored = localStorage.getItem('starredItems');
       const starred = stored ? JSON.parse(stored) : [];
 
-      // 2. Load Mock Data
       const filteredProfiles = MOCK_PROFILES.filter(p => 
         !starred.some((s: any) => s.id === p.id && s.type === 'roommates')
       );
@@ -104,10 +107,10 @@ export default function ExplorePage() {
       setLoading(false);
     };
 
-    // Simulate network delay for realism
     setTimeout(loadMockData, 800);
   }, []);
 
+  // --- SWIPE LOGIC ---
   const handleSwipe = (direction: 'left' | 'right') => {
     const currentData = activeTab === 'roommates' ? profiles : listings;
     
@@ -121,18 +124,62 @@ export default function ExplorePage() {
     setTimeout(() => {
       setCurrentIndex(prev => prev + 1);
       setSwipeDirection(null);
+      setDragOffset(0); // Reset drag after animation
     }, 300);
+  };
+
+  // --- TOUCH HANDLERS ---
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsDragging(true);
+    startX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    const currentX = e.touches[0].clientX;
+    const diff = currentX - startX.current;
+    setDragOffset(diff);
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+    
+    // Swipe Threshold: 100px
+    if (dragOffset > 100) {
+      handleSwipe('right');
+    } else if (dragOffset < -100) {
+      handleSwipe('left');
+    } else {
+      // Snap back if threshold not met
+      setDragOffset(0);
+    }
+  };
+
+  // Helper to determine active styles
+  const getCardStyle = () => {
+    // 1. If animating out (button click or swipe finish), let CSS handle it
+    if (swipeDirection) return {}; 
+    
+    // 2. If dragging, follow the finger
+    if (isDragging || dragOffset !== 0) {
+       return {
+         transform: `translateX(${dragOffset}px) rotate(${dragOffset * 0.05}deg)`,
+         cursor: 'grabbing',
+         transition: isDragging ? 'none' : 'transform 0.3s ease-out' // No transition while dragging, smooth snap back
+       };
+    }
+    
+    // 3. Default state
+    return { cursor: 'grab' };
   };
 
   const handleStar = () => {
     const currentItem = activeTab === 'roommates' ? profiles[currentIndex] : listings[currentIndex];
     if (!currentItem) return;
 
-    // Use a generic ID if user is not logged in (Demo Mode)
     const userId = localStorage.getItem('userId') || 'demo_user';
-
     const storageKey = `starredItems_${userId}`;
-    const stored = localStorage.getItem(storageKey); // User specific
+    const stored = localStorage.getItem(storageKey); 
     const starredItems = stored ? JSON.parse(stored) : [];
 
     const newItem = {
@@ -143,12 +190,10 @@ export default function ExplorePage() {
       subtitle: activeTab === 'roommates' ? currentItem.major : `${(currentItem.price / 1000000).toFixed(1)}M`,
     };
 
-    // Save
     const exists = starredItems.find((i: any) => i.id === newItem.id && i.type === newItem.type);
     if (!exists) {
       const updatedList = [newItem, ...starredItems];
-      localStorage.setItem(storageKey, JSON.stringify(updatedList)); // Save to user scope
-      // Also save to global for the component check
+      localStorage.setItem(storageKey, JSON.stringify(updatedList)); 
       const globalStored = localStorage.getItem('starredItems');
       const globalList = globalStored ? JSON.parse(globalStored) : [];
       localStorage.setItem('starredItems', JSON.stringify([...globalList, newItem]));
@@ -178,7 +223,6 @@ export default function ExplorePage() {
   const isRoommates = activeTab === 'roommates';
   const currentItem = currentData[currentIndex];
 
-  // --- EMPTY STATE ---
   if (!currentItem) {
     return (
       <div className="min-h-screen bg-white flex flex-col pb-24">
@@ -191,14 +235,13 @@ export default function ExplorePage() {
         <div className="flex-1 flex items-center justify-center p-4">
           <EmptyState 
               type="discovery" 
-              onAction={() => window.location.reload()} // Simple reload to reset demo
+              onAction={() => window.location.reload()} 
           />
         </div>
       </div>
     );
   }
 
-  // --- MAIN UI ---
   return (
     <div className="min-h-screen bg-white flex flex-col pb-24">
       <Header 
@@ -210,11 +253,18 @@ export default function ExplorePage() {
 
       {/* CARD STACK */}
       <div className="flex-1 p-4 flex items-center justify-center overflow-hidden">
-        <div className="relative w-full px-4 max-w-sm h-[65vh] min-h-[500px]">
+        <div 
+            className="relative w-full px-4 max-w-sm h-[65vh] min-h-[500px]"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+        >
           {isRoommates ? (
             <Card 
+              style={getCardStyle()}
               className={`
-                relative w-full h-full overflow-hidden transition-all duration-300 ease-out shadow-xl border-0 bg-white rounded-3xl
+                relative w-full h-full overflow-hidden shadow-xl border-0 bg-white rounded-3xl touch-pan-y
+                ${!isDragging && !swipeDirection ? 'transition-all duration-300 ease-out' : ''}
                 ${swipeDirection === 'left' ? '-translate-x-full -rotate-12 opacity-0' : ''}
                 ${swipeDirection === 'right' ? 'translate-x-full rotate-12 opacity-0' : ''}
               `}
@@ -257,11 +307,14 @@ export default function ExplorePage() {
               </div>
             </Card>
           ) : (
-            <div className={`
-                transition-all duration-300 w-full
-                ${swipeDirection === 'left' ? '-translate-x-full -rotate-12 opacity-0' : ''}
-                ${swipeDirection === 'right' ? 'translate-x-full rotate-12 opacity-0' : ''}
-            `}>
+            <div 
+                style={getCardStyle()}
+                className={`
+                    w-full transition-all duration-300 touch-pan-y
+                    ${swipeDirection === 'left' ? '-translate-x-full -rotate-12 opacity-0' : ''}
+                    ${swipeDirection === 'right' ? 'translate-x-full rotate-12 opacity-0' : ''}
+                `}
+            >
               <ListingCard 
                 listing={currentItem} 
                 onViewListing={() => alert("Details available in PRO version")} 
