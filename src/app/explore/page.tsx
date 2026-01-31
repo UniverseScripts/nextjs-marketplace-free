@@ -125,7 +125,7 @@ export default function ExplorePage() {
       setCurrentIndex(prev => prev + 1);
       setSwipeDirection(null);
       setDragOffset(0); // Reset drag after animation
-    }, 300);
+    }, 800);
   };
 
   // --- TOUCH HANDLERS ---
@@ -264,7 +264,7 @@ export default function ExplorePage() {
               style={getCardStyle()}
               className={`
                 relative w-full h-full overflow-hidden shadow-xl border-0 bg-white rounded-3xl touch-pan-y
-                ${!isDragging && !swipeDirection ? 'transition-all duration-300 ease-out' : ''}
+                ${!isDragging && !swipeDirection ? 'transition-all duration-800 ease-out' : ''}
                 ${swipeDirection === 'left' ? '-translate-x-full -rotate-12 opacity-0' : ''}
                 ${swipeDirection === 'right' ? 'translate-x-full rotate-12 opacity-0' : ''}
               `}
